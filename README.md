@@ -1,6 +1,6 @@
 # Brazil's COVID-19 Data Pipeline with Airflow
 
-This project sets up an automated pipeline to download, process, and analyze Brazil's COVID-19 data from the [Ministry of Health](https://opendatasus.saude.gov.br/), storing results in Google BigQuery for visualization.
+This project sets up an automated pipeline to download, process, and analyze Brazil's COVID-19 data from the [Ministry of Health](https://opendatasus.saude.gov.br/), storing results in Google BigQuery for visualization. It's part of [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp) with the goal of applying everything learned in the course to build an end-to-end data pipeline.
 
 ## Data Report
  - [Looker Studio Report](https://lookerstudio.google.com/reporting/fb0a6b9d-99f8-413d-8095-392a4c01917c)
