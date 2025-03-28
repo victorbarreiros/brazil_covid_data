@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    network_mode: bridge
+    env_file: .env
+    environment:
+      - AIRFLOW__CORE__ENABLE_XCOM_PICKLING=True
+      - AIRFLOW__CORE__TEST_CONNECTION=Enabled
+      - AIRFLOW_CONN_GOOGLE_CLOUD_DEFAULT='google-cloud-platform://?extra__google_cloud_platform__keyfile_dict=${BASE64_JSON}'
+      - GOOGLE_APPLICATION_CREDENTIALS_JSON=${BASE64_JSON}
+      - AIRFLOW__GOOGLE_CLOUD_DEFAULT__KEYFILE_JSON=${BASE64_JSON}
+      - AIRFLOW__GOOGLE_CLOUD_DEFAULT__PROJECT_ID=datawarehousing-de-zoomcamp
+      - GCS_BUCKET_NAME=${GCS_BUCKET_NAME}
+      - BQ_DATASET_PATH=${BQ_DATASET_PATH}
+      - PIP_ADDITIONAL_REQUIREMENTS=google-cloud-storage google-cloud-bigquery google-cloud-dataproc
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./.credentials:/opt/airflow/.credentials:ro
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "
+      airflow db init &&
+      airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com &&
+      airflow webserver --port 8080 &
+      airflow scheduler
+      "
+
+volumes:
+  postgres_data:
